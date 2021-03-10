@@ -6,11 +6,13 @@
     <persistence-unit name="postgresql">
         <provider>org.hibernate.reactive.provider.ReactivePersistenceProvider</provider>
 
+        <class>com.zanclus.vertx.models.Todo</class>
+
         <properties>
 
             <!-- PostgreSQL -->
             <property name="javax.persistence.jdbc.url"
-                      value="jdbc:postgresql://localhost/todo"/>
+                      value="jdbc:postgresql://localhost:5432/todo"/>
 
             <!-- Credentials -->
             <property name="javax.persistence.jdbc.user"
@@ -25,6 +27,7 @@
             <!-- Automatic schema export -->
             <property name="javax.persistence.schema-generation.database.action"
                       value="drop-and-create"/>
+            <property name="javax.persistence.create-database-schemas" value="true"/>
 
             <!-- SQL statement logging -->
             <property name="hibernate.show_sql" value="true"/>

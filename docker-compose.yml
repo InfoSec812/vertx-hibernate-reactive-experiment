@@ -3,7 +3,7 @@ services:
   postgresql:
     image: quay.io/bitnami/postgresql:13.2.0
     ports:
-    - 5432
+    - 5432:5432
     environment:
       - POSTGRESQL_PASSWORD=todo
       - POSTGRESQL_DATABASE=todo
