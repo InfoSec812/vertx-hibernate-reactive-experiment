@@ -57,7 +57,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewTodo'
+              $ref: '#/components/schemas/Todo'
       responses:
         '200':
           description: 'OK'
@@ -115,39 +115,25 @@ paths:
 
 components:
   schemas:
-    NewTodo:
+    Todo:
       type: object
       title: NewTodo
       discriminator:
         propertyName: id
       properties:
+        id:
+          x-java-field-annotations:
+            - '@javax.persistence.Id'
+            - '@javax.persistence.GeneratedValue(generator = "UUID")'
+            - '@org.hibernate.annotations.GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")'
+            - '@javax.persistence.Column(name = "id", updatable = false, nullable = false)'
+          type: string
+          format: uuid
+        created:
+          type: string
+          format: date-time
         title:
           type: string
           maxLength: 255
         description:
           type: string
-    Todo:
-      type: object
-      title: Todo
-      discriminator:
-        propertyName: id
-      x-java-class-annotations:
-        - '@javax.persistence.Entity'
-        - '@javax.persistence.Table(name = "todos")'
-      required:
-        - id
-      allOf:
-        - $ref: '#/components/schemas/NewTodo'
-        - type: object
-          properties:
-            id:
-              x-java-field-annotations:
-                - '@javax.persistence.Id'
-                - '@javax.persistence.GeneratedValue(generator = "UUID")'
-                - '@org.hibernate.annotations.GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")'
-                - '@javax.persistence.Column(name = "id", updatable = false, nullable = false)'
-              type: string
-              format: uuid
-            created:
-              type: string
-              format: date-time
