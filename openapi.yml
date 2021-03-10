@@ -117,9 +117,10 @@ components:
   schemas:
     Todo:
       type: object
-      title: NewTodo
-      discriminator:
-        propertyName: id
+      title:
+      x-java-class-annotations:
+        - '@javax.persistence.Entity'
+        - '@javax.persistence.Table(name = "todos")'
       properties:
         id:
           x-java-field-annotations:
