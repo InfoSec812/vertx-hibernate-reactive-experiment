@@ -3,7 +3,7 @@ package com.zanclus.vertx;
 import com.zanclus.vertx.models.Todo;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import org.hibernate.reactive.stage.Stage;
+import org.hibernate.reactive.mutiny.Mutiny;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -14,7 +14,7 @@ import java.time.ZoneId;
 public class MainVerticle extends AbstractVerticle {
 
     EntityManagerFactory emf;
-    private Stage.SessionFactory sessionFactory;
+    private Mutiny.SessionFactory sessionFactory;
 
     @Override
     public void start(Promise<Void> start) {
@@ -25,7 +25,7 @@ public class MainVerticle extends AbstractVerticle {
         }
 
         try {
-            sessionFactory = emf.unwrap(Stage.SessionFactory.class);
+            sessionFactory = emf.unwrap(Mutiny.SessionFactory.class);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -42,13 +42,13 @@ public class MainVerticle extends AbstractVerticle {
         todo.setCreated(LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault()));
         sessionFactory
             .withTransaction((session, tx) -> session.persist(todo))
-            .exceptionally(this::logError)
-            .thenRun(this::logAction);
+            .onFailure(this::logError)
+            .invoke(this::logAction);
     }
 
-    private Void logError(Throwable throwable) {
+    private boolean logError(Throwable throwable) {
         throwable.printStackTrace();
-        return null;
+        return false;
     }
 
     private void logAction() {
