@@ -3,7 +3,7 @@ package com.zanclus.vertx;
 import com.zanclus.vertx.models.Todo;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import org.hibernate.reactive.mutiny.Mutiny;
+import org.hibernate.reactive.stage.Stage;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -14,7 +14,7 @@ import java.time.ZoneId;
 public class MainVerticle extends AbstractVerticle {
 
     EntityManagerFactory emf;
-    private Mutiny.SessionFactory sessionFactory;
+    private Stage.SessionFactory sessionFactory;
 
     @Override
     public void start(Promise<Void> start) {
@@ -25,7 +25,7 @@ public class MainVerticle extends AbstractVerticle {
         }
 
         try {
-            sessionFactory = emf.unwrap(Mutiny.SessionFactory.class);
+            sessionFactory = emf.unwrap(Stage.SessionFactory.class);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -42,16 +42,16 @@ public class MainVerticle extends AbstractVerticle {
         todo.setCreated(LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault()));
         sessionFactory
             .withTransaction((session, tx) -> session.persist(todo))
-            .onFailure(this::logError)
-            .invoke(this::logAction);
+            .exceptionally(this::logError)
+            .whenComplete(this::logAction);
     }
 
-    private boolean logError(Throwable throwable) {
-        throwable.printStackTrace();
-        return false;
-    }
-
-    private void logAction() {
+    private void logAction(Void unused, Throwable throwable) {
         System.out.println("Added Todo");
+    }
+
+    private Void logError(Throwable throwable) {
+        throwable.printStackTrace();
+        return null;
     }
 }

@@ -9,7 +9,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <!-- vert.x properties -->
-        <vertx.version>3.8.5</vertx.version>
+        <vertx.version>3.9.6</vertx.version>
         <vertx.verticle>com.zanclus.vertx.MainVerticle</vertx.verticle>
         <!-- Maven plugins -->
         <vertx-maven-plugin.version>1.0.22</vertx-maven-plugin.version>
@@ -94,24 +94,6 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-scm-plugin</artifactId>-->
-<!--                <version>1.11.2</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>initialize</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>checkout</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <connectionUrl>scm:git:https://github.com/redhat-appdev-practice/spring-data-openapi-templates.git</connectionUrl>-->
-<!--                            <checkoutDirectory>templates</checkoutDirectory>-->
-<!--                            <connectionType>connection</connectionType>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
