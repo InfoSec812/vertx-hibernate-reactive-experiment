@@ -1,5 +1,6 @@
 package com.zanclus.vertx;
 
+import com.zanclus.vertx.db.TodoRepository;
 import com.zanclus.vertx.models.Todo;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
@@ -15,8 +16,7 @@ import java.util.Map;
 
 public class MainVerticle extends AbstractVerticle {
 
-    EntityManagerFactory emf;
-    private Mutiny.SessionFactory sessionFactory;
+    private TodoRepository repository;
 
     @Override
     public void start(Promise<Void> start) {
@@ -31,14 +31,11 @@ public class MainVerticle extends AbstractVerticle {
         dbSettings.put("hibernate.format_sql","true");
         dbSettings.put("hibernate.highlight_sql","true");
 
+        EntityManagerFactory emf;
         try {
             emf = Persistence.createEntityManagerFactory("postgresql", dbSettings);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
-        try {
-            sessionFactory = emf.unwrap(Mutiny.SessionFactory.class);
+            Mutiny.SessionFactory sessionFactory = emf.unwrap(Mutiny.SessionFactory.class);
+            repository = new TodoRepository(sessionFactory);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -53,8 +50,7 @@ public class MainVerticle extends AbstractVerticle {
         todo.setTitle("Example");
         todo.setDescription("Example description");
         todo.setCreated(LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault()));
-        sessionFactory
-            .withTransaction((session, tx) -> session.persist(todo))
+        repository.add(todo)
             .onFailure(this::logError)
                 .recoverWithNull()
             .subscribe()
